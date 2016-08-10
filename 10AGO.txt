@@ -69,11 +69,40 @@ Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
         --output /mnt/e/diana/kenya/U133_norm_complete_batch_corrected_mtx.txt
 
 # collapse
-cd /mnt/e/diana/kenya/
-Rscript ~/rnw/normalization-preprocessing/collapser.R \
-        --matrix U133_norm_complete_batch_corrected_mtx.txt \
-        --phenotype metadata.tsv \
-        --collapse medians \
-        --case case \
-        --control control \
-        --pathifier no
+library(argparse)
+library(gProfileR)
+library(limma)
+
+edata <- as.matrix(read.table(file="U133_norm_complete_batch_corrected_mtx.txt", header=TRUE, sep="\t", row.names=1))
+pheno <- read.table(file="metadata.tsv", header = TRUE, sep = "\t", row.names=1)
+
+gconvert <- gconvert(query=rownames(edata), target="HGNC", mthreshold=1, filter_na=FALSE)
+class(gconvert[,1])<-"integer"
+gconvert<- gconvert[sort.list(gconvert[,1]),]
+genesymbol <- gconvert[,5]
+genesymbol<-ifelse(genesymbol=="N/A", as.vector(rownames(edata)), as.vector(genesymbol))
+
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+###  Medians collapse  ###
+colMedians=function(mat,na.rm=TRUE) {return(apply(mat,2,median,na.rm=na.rm))}
+precolaps <- data.frame(genesymbol, edata)
+colapsed <- do.call(rbind, lapply(split(precolaps,precolaps[,1]), function(chunk) {colMedians(chunk[,-1])}))
+
+write.table(colapsed, file="U133_collapsed_exp_mtx.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
+
+affy <- rownames(colapsed)[grepl("*_at", rownames(colapsed))]
+genes <- setdiff(rownames(colapsed), affy)
+solo_geneID <- colapsed[genes, ]
+
+write.table(solo_geneID, file="U133_collapsed_soloGENEID_exp_mtx.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
+
+probes <- rownames(colapsed)
+write.table(probes, file="U133_probes.txt", quote = FALSE, sep = "\t", row.names = FALSE, col.names=FALSE)
+write.table(genes, file="U133_probes_sologeneID.txt", quote = FALSE, sep = "\t", row.names = FALSE, col.names=FALSE)
+
+save.image("norm_10ago.RData")
