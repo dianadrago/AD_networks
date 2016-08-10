@@ -69,9 +69,10 @@ Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
         --output /mnt/e/diana/kenya/U133_norm_complete_batch_corrected_mtx.txt
 
 # collapse
+cd /mnt/e/diana/kenya/
 Rscript ~/rnw/normalization-preprocessing/collapser.R \
-        --matrix /mnt/e/diana/kenya/U133_norm_complete_batch_corrected_mtx.txt \
-        --phenotype /mnt/e/diana/kenya/metadata.tsv \
+        --matrix U133_norm_complete_batch_corrected_mtx.txt \
+        --phenotype metadata.tsv \
         --collapse medians \
         --case case \
         --control control \
