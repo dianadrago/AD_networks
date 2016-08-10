@@ -1,0 +1,62 @@
+# R libraries:
+# install.packages("argparse")
+# install.packages("gProfileR")
+# install.packages("lme4")
+# source("http://bioconductor.org/biocLite.R")
+# biocLite(c("affy", "limma", "frma", "sva", "annotate"))
+
+# https://github.com/CSB-IG/rnw/tree/master/normalization-preprocessing
+
+# 133plus2
+
+# biocLite("hgu133plus2frmavecs")
+
+# GSE48350: /mnt/e/diana/kenya/GSE48350_RAW
+# GSE4757: /mnt/e/diana/kenya/GSE4757
+# ~/rnw/normalization-preprocessing
+
+Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
+        --celfolder /mnt/e/diana/kenya/GSE48350_RAW/ /mnt/e/diana/kenya/GSE4757/ \
+        --bgcorrect rma \
+        --normalize quantile \
+        --summarize robust_weighted_average \
+        --matrix /mnt/e/diana/kenya/133plus2.tsv
+
+# 133A
+
+# biocLite("hgu133afrmavecs")
+
+# GSE1297: /mnt/e/diana/kenya/GSE1297
+# ~/rnw/normalization-preprocessing
+
+Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
+        --celfolder /mnt/e/diana/kenya/GSE1297/ \
+        --bgcorrect rma \
+        --normalize quantile \
+        --summarize robust_weighted_average \
+        --matrix /mnt/e/diana/kenya/133A.tsv
+        
+# agregar un tab a cada columna de cada archivo .tsv
+
+# Script R
+
+U133A <- read.table("/mnt/e/diana/kenya/133A.tsv")
+U133plus2 <- read.table("/mnt/e/diana/kenya/133plus2.tsv")
+
+dim(U133A)
+dim(U133plus2)
+
+U133A_crop <- U133A[intersect(rownames(U133A), rownames(U133plus2)),]
+U133plus2_crop <- U133plus2[intersect(rownames(U133A), rownames(U133plus2)),]
+
+dim(U133A_crop)
+dim(U133plus2_crop)
+
+library(limma)
+identical(rownames(U133A_crop), rownames(U133plus2_crop))
+U133_norm <- data.matrix(cbind(U133A_crop, U133plus2_crop))
+U133_final <- normalizeBetweenArrays(U133_norm)
+
+dim(U133_norm)
+
+write.table(U133_norm, "U133_norm_complete_set.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
