@@ -60,3 +60,10 @@ U133_final <- normalizeBetweenArrays(U133_norm)
 dim(U133_norm)
 
 write.table(U133_norm, "U133_norm_complete_set.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+
+# combat
+
+Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
+            --matrix /mnt/e/diana/kenya/U133_norm_complete_set.txt \
+            --phenotype /mnt/e/diana/kenya/metadata.tsv \
+            --output /mnt/e/diana/kenya/U133_norm_complete_batch_corrected_mtx.txt
