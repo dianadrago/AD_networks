@@ -38,9 +38,10 @@ dev.off()
 ####Como fue un sólo set de datos no se hace ComBat hasta despues####
 
 # collapse
+cd /mnt/e/diana/kenya/
 Rscript ~/rnw/normalization-preprocessing/collapser.R \
-    --matrix /mnt/e/diana/kenya/HG1ST.txt \
-    --phenotype /mnt/e/diana/kenya/metadata.HG1st.tsv \
+    --matrix HG1ST.txt \
+    --phenotype metadata.HG1st.tsv \
     --collapse B \
     --case case \
     --control control \
