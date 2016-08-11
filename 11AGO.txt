@@ -6,6 +6,7 @@ https://bioconductor.org/packages/devel/bioc/manuals/oligo/man/oligo.pdf
 library("oligo") 
 library(limma)
 library("frma") 
+library("affy")
 
 library(pd.hugene.1.0.st.v1) 
 celFiles <- list.celfiles("/mnt/e/diana/kenya/GSE36980", full.name=TRUE)
@@ -34,7 +35,8 @@ plotDensity(eset, col=mycolors, main="Data After normalization")
 boxplot(eset,col=mycolors, main="Data After normalization")
 dev.off()
 
-####Como fue un sólo set de datos no se hace ComBat####
+####Como fue un sólo set de datos no se hace ComBat hasta despues####
+
 # collapse
 Rscript ~/rnw/normalization-preprocessing/collapser.R \
     --matrix /mnt/e/diana/kenya/HG1ST.txt \
