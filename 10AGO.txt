@@ -7,7 +7,7 @@
 
 # https://github.com/CSB-IG/rnw/tree/master/normalization-preprocessing
 
-# 133plus2
+# 133plus2 #####Normalización con frma de cada set por separado ####
 
 # biocLite("hgu133plus2frmavecs")
 
@@ -38,7 +38,7 @@ Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
         
 # agregar un tab a cada columna de cada archivo .tsv
 
-# Script R
+# Script R #### Para arreglar las dimensiones si se utilizan dos arreglos diferentes###
 
 U133A <- read.table("/mnt/e/diana/kenya/133A.tsv")
 U133plus2 <- read.table("/mnt/e/diana/kenya/133plus2.tsv")
