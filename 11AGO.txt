@@ -18,7 +18,7 @@ data("hugene.1.0.st.v1barcodevecs")
 frmaData <- frma(affybatch, input.vecs=hugene.1.0.st.v1frmavecs, background="rma", normalize="quantile", summarize="robust_weighted_average")
 
 eset <- exprs(frmaData)
-write.table(eset, file="HG1ST.tsv", quote = F, row.names = TRUE, col.names = TRUE, sep = "\t")
+write.table(eset, file="HG1ST.txt", quote = F, row.names = TRUE, col.names = TRUE, sep = "\t")
 
 pdf("HG1ST.pdf",width=7,height=5)
 N=length(affybatch@phenoData@data$sample)
