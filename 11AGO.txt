@@ -1,0 +1,35 @@
+# frma affy HUMAN GENE 1.0 ST
+
+https://support.bioconductor.org/p/57115/
+https://bioconductor.org/packages/devel/bioc/manuals/oligo/man/oligo.pdf
+
+library("oligo") 
+library(limma)
+library("frma") 
+
+library(pd.hugene.1.0.st.v1) 
+celFiles <- list.celfiles("/mnt/e/diana/kenya/GSE36980", full.name=TRUE)
+affybatch <- read.celfiles(celFiles) 
+
+library("hugene.1.0.st.v1frmavecs") 
+data("hugene.1.0.st.v1frmavecs") 
+data("hugene.1.0.st.v1barcodevecs") 
+
+frmaData <- frma(affybatch, input.vecs=hugene.1.0.st.v1frmavecs, background="rma", normalize="quantile", summarize="robust_weighted_average")
+
+eset <- exprs(frmaData)
+write.table(eset, file="HG1ST.tsv", quote = F, row.names = TRUE, col.names = TRUE, sep = "\t")
+
+pdf("HG1ST.pdf",width=7,height=5)
+N=length(affybatch@phenoData@data$sample)
+pm.mm=0
+for (i in 1:N) {pm.mm[i] = mean(mm(affybatch[,i])>pm(affybatch[,i]))}
+mycolors = rep(c("blue","red","green", "magenta"), each = 2)
+# hist(affybatch, col=mycolors, main="Raw data distribution")
+# boxplot(affybatch,col=mycolors, main="Raw data distribution")
+plot(100*pm.mm, type='h', main='Percent of MMs > PMs', ylab="%",xlab="Microarrays", ylim=c(0,50), col="red", lwd=5 )
+grid(nx = NULL, ny = 6, col = "blue", lty = "dotted",lwd = par("lwd"), equilogs = TRUE)
+mycolors = rep(c("blue","red","green", "magenta"), each = 2)
+plotDensity(eset, col=mycolors, main="Data After normalization")
+boxplot(eset,col=mycolors, main="Data After normalization")
+dev.off()
