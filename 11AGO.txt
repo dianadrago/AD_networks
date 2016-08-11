@@ -33,3 +33,13 @@ mycolors = rep(c("blue","red","green", "magenta"), each = 2)
 plotDensity(eset, col=mycolors, main="Data After normalization")
 boxplot(eset,col=mycolors, main="Data After normalization")
 dev.off()
+
+####Como fue un sólo set de datos no se hace ComBat####
+# collapse
+Rscript ~/rnw/normalization-preprocessing/collapser.R \
+    --matrix /mnt/e/diana/kenya/HG1ST.txt \
+    --phenotype /mnt/e/diana/kenya/metadata.HG1st.tsv \
+    --collapse B \
+    --case case \
+    --control control \
+    --pathifier no
