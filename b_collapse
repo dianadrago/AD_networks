@@ -1,0 +1,37 @@
+# get the data
+edata <- as.matrix(read.table("HG1ST.txt"))
+pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
+
+# annotation
+gconvert <- gconvert(query=rownames(edata), target="HGNC", mthreshold=1, filter_na=FALSE)
+class(gconvert[,1])<-"integer"
+gconvert<- gconvert[sort.list(gconvert[,1]),]
+
+genesymbol <- gconvert[,5]
+genesymbol<-ifelse(genesymbol=="N/A", as.vector(rownames(edata)), as.vector(genesymbol))
+
+# Design a contingence matrix
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+###  B collapse  ###
+# make the contrasts matrix
+cont.matrix = makeContrasts('case - control', levels=design)
+# differential expression analisys
+fit = lmFit(edata, design)
+fit2 = contrasts.fit(fit, cont.matrix)
+fit2 = eBayes(fit2)
+statistics <- topTable(fit2, coef=1, adjust='fdr', n = length(row.names(edata)), sort = "none")
+# making the matrix to proced the collapse
+precolaps <- data.frame(genesymbol, statistics[,6],edata)
+colnames(precolaps)[2]<-"B"
+# collapse
+colapsed <- do.call(rbind, lapply(split(precolaps,precolaps$genesymbol),function(chunk) chunk[which.max(chunk$B),]))
+rownames(colapsed)<-colapsed[,1]
+colapsed <- colapsed[,c(-1,-2)]
+
+## Write result ##
+write.table(colapsed, file="HG10ST_colapsed.txt", quote = FALSE, sep = "\t", row.names = TRUE)
