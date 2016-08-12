@@ -1,4 +1,7 @@
 # get the data
+library(gProfileR)
+library(limma)
+
 edata <- as.matrix(read.table("HG1ST.txt"))
 pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
 
