@@ -25,9 +25,9 @@ pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
 ID <- featureNames(eset)
 annodb <- "hugene10stprobeset.db"  
 
-pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
 # Symbol <- as.character(lookUp(ID, annodb, "SYMBOL"))
 
+#annotation HuGene v1
 db <- hugene10stprobesetSYMBOL
 annot <- as.list(db[ID])
 annot <- data.frame(unlist(as.list(annot)))
