@@ -23,8 +23,7 @@ write.table(edata, file="HG1ST.txt", quote = F, row.names = TRUE, col.names = TR
 pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
 
 ID <- featureNames(eset)
-annodb <- "hugene10stprobeset.db"  
-
+# annodb <- "hugene10stprobeset.db"  
 # Symbol <- as.character(lookUp(ID, annodb, "SYMBOL"))
 
 #annotation HuGene v1
