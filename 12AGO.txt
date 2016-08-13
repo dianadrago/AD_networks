@@ -57,4 +57,4 @@ rownames(colapsed)<-colapsed[,1]
 colapsed <- colapsed[,c(-1,-2)]
 
 ## Write result ##
-write.table(colapsed, file="HG10ST_colapsed.txt", quote = FALSE, sep = "\t", row.names = TRUE)
+write.table(colapsed, file="HG10ST_colapsed.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
