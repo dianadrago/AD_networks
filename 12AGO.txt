@@ -58,3 +58,18 @@ colapsed <- colapsed[,c(-1,-2)]
 
 ## Write result ##
 write.table(colapsed, file="HG10ST_colapsed.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
+
+# gen only gene IDs matrix
+
+> dim(colapsed)
+[1] 44987    79
+> filtered <- colapsed[24974:44987, ]                                                                                                                                         
+> dim(filtered)
+[1] 20014    79
+> filtered[1:5, 1:5]
+        GSM907792.CEL GSM907793.CEL GSM907794.CEL GSM907795.CEL GSM907796.CEL
+A1BG         8.146155      7.932071      8.057220      8.272984      8.306809
+A1CF         4.623660      4.804373      4.707217      5.047640      4.522802
+A2M         10.301480     10.614687     11.269049     10.549778     12.141648
+A2ML1        6.683083      6.109142      6.429606      6.327591      6.431935
+A3GALT2      6.019041      6.114715      6.604461      6.358048      6.349678
