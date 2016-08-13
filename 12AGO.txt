@@ -32,7 +32,6 @@ annot <- as.list(db[ID])
 annot <- data.frame(unlist(as.list(annot)))
 gene <- as.vector(annot[,1])
 genesymbol<-ifelse(is.na(gene), as.vector(ID), as.vector(gene))
-genesymbol <- annot
 
 # Design a contingence matrix
 design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
