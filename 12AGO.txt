@@ -73,3 +73,6 @@ A1CF         4.623660      4.804373      4.707217      5.047640      4.522802
 A2M         10.301480     10.614687     11.269049     10.549778     12.141648
 A2ML1        6.683083      6.109142      6.429606      6.327591      6.431935
 A3GALT2      6.019041      6.114715      6.604461      6.358048      6.349678
+
+write.table(filtered, file="HG10ST_colapsed_filtered.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
+
