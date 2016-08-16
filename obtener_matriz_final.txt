@@ -1,0 +1,65 @@
+
+
+library(limma)
+
+
+HGV1 <- read.table("/mnt/e/diana/kenya/HuGeV1/HG10ST_colapsed_filtered.txt")
+meta_HGV1 <- read.table("/mnt/e/diana/kenya/HuGeV1/metadata.HG1st.tsv", header=T)
+
+U133 <- read.table("/mnt/e/diana/kenya/U133AFFY/U133_norm_complete_batch_corrected_mtx_colapsed.txt")
+meta_U133 <- read.table("/mnt/e/diana/kenya/U133AFFY/metadata.tsv", header=T)
+
+meta_HGV1[,3] <- 1
+meta_U133[,3] <- 2
+
+meta <- rbind(meta_HGV1, meta_U133)
+write.table(meta, file = "metadata_full_final.txt", sep = "\t", col.names= T, row.names= F, quote = F )
+
+genes <- intersect(rownames(HGV1), rownames(U133))
+
+HGV1_filtered <- HGV1[genes,]
+U133_filtered <- U133[genes,]
+
+dim(HGV1_filtered)
+dim(U133_filtered)
+
+identical(rownames(HGV1_filtered), rownames(U133_filtered))
+
+expmtx <- cbind(HGV1_filtered, U133_filtered)
+
+expmtx_norm <- normalizeBetweenArrays(expmtx)
+
+write.table(expmtx_norm, "final_exp_mtx_norm.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+
+# Combat
+
+Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
+        --matrix /mnt/e/diana/kenya/final_exp_mtx_norm.txt \
+        --phenotype /mnt/e/diana/kenya/metadata_full_final.txt \
+        --output /mnt/e/diana/kenya/matriz_final_para_redes_difexp.txt
+
+############### exp differencial
+library(limma)
+edata <- read.table("/mnt/e/diana/kenya/matriz_final_para_redes_difexp.txt")
+pheno <- read.table("/mnt/e/diana/kenya/metadata_full_final.txt", header=T)
+
+# Design a contingence matrix
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+# make the contrasts matrix
+cont.matrix = makeContrasts('case - control', levels=design)
+# differential expression analisys
+fit = lmFit(edata, design)
+fit2 = contrasts.fit(fit, cont.matrix)
+fit2 = eBayes(fit2)
+statistics <- topTable(fit2, coef=1, adjust='fdr', n = length(row.names(edata)), sort = "none")
+
+write.table(statistics, "matriz_final_para_redes_difexp_wholegenediffexp.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+
+/mnt/e/diana/kenya/matriz_final_para_redes_difexp_wholegenediffexp.txt
+
+
