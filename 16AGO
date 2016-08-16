@@ -1,0 +1,39 @@
+###Matrices sin celulas y expresión diferencial
+matriz <- read.table("complete_all_combat_mtx.txt") 
+meta <- read.table("metadata_complete.tsv", header= TRUE) 
+dim(matriz)
+dim(meta)
+celulas<- list.files(path = "/mnt/e/diana/kenya/GSE4757/")
+muestras <- setdiff(as.vector(meta$sample_name), celulas)
+dim(matriz)
+filtro<- (matriz[,muestras])
+dim(filtro)
+meta_filtro<- (meta[meta$sample_name %in% muestras,])
+dim(meta)
+dim(meta_filtro)
+head(meta_filtro)
+filtro[1:5, 1:5]
+write.table(filtro, "filtro.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+write.table(meta_filtro, "meta_filtro.txt", quote = F, row.names = FALSE, col.names = TRUE, sep = "\t")
+
+####Expresion diferencial
+library(limma)
+edata <- read.table("filtro.txt")
+pheno <- read.table("meta_filtro.txt", header=TRUE)
+
+# Design a contingence matrix
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+# make the contrasts matrix
+cont.matrix = makeContrasts('case - control', levels=design)
+# differential expression analisys
+fit = lmFit(edata, design)
+fit2 = contrasts.fit(fit, cont.matrix)
+fit2 = eBayes(fit2)
+statistics <- topTable(fit2, coef=1, adjust='fdr', n = length(row.names(edata)), sort = "none")
+
+write.table(statistics, "matriz_final_para_expresion_sc.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
