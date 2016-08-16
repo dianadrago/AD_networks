@@ -89,3 +89,8 @@ xg_norm_fpvalue <- graph.adjacency(adjmatrix= x_norm, mode='undirected', diag=F,
 xsif_norm_fpvalue <- get.data.frame(xg_norm_fpvalue)
 write.table(xsif_norm_fpvalue, file = "casos_norm_fpvalue_sif.txt", sep = "\t", col.names= T, row.names= F, quote = F )
 xdpi <- aracne(mim =  x_norm, eps = 0.1)
+
+write.table(xdpi, file = "casos_norm_fpvalue_dpi.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
+xg_norm_fpvalue_dpi <- graph.adjacency(adjmatrix= xdpi, mode='undirected', diag=F, weighted=T)
+xsif_norm_fpvalue_dpi <- get.data.frame(xg_norm_fpvalue_dpi)
+write.table(xsif_norm_fpvalue_dpi, file = "casos_norm_fpvalue_sif_dpi.txt", sep = "\t", col.names= T, row.names= F, quote = F )
