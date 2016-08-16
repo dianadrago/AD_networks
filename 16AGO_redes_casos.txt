@@ -116,7 +116,7 @@ quantile(casos_q, probs=seq(0.995, 1, 0.00001))
 0.7617826 0.7758411 0.7956935 0.8270437 1.0000000
 
 ### 99.980%= 0.6774973
-pvalue= 3.532289e-59
+pvalue= 1.860931e-41
 mi2p <- function(mi, n){
   alfa <- 1.062
   beta <- -48.7
@@ -125,8 +125,8 @@ mi2p <- function(mi, n){
   return(x)
 }
 
-mi2p(0.6774973,239)                                                                                               
-[1] 3.532289e-59 
+mi2p(0.6774973,144)
+[1] 1.860931e-41
 
 x_norm[x_norm < 0.6774973] <- 0
 write.table(x_norm, file = "casos_norm_fpvalue.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
