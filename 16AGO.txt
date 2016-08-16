@@ -1,0 +1,64 @@
+
+library(plyr)
+library(minet)
+library(igraph)
+
+adjs <- sort(list.files(pattern="*.adj"))
+
+length(adjs)
+
+adjtosqmtx <- function(g){
+  a <- scan(file = g, skip = 17, what = "")
+  m <- matrix(unlist(a[-(1)]), ncol = 2, byrow = T)
+  rownames(m) <- c(m[,1])
+  m <- t(m[,2])
+  m
+}
+
+M <- lapply(adjs, adjtosqmtx)
+
+> length(adjs)                                                                                                                                          
+> ((12169**2)-12169)/2
+[1] 74036196
+> x <- t(rbind.fill.matrix(M))
+> dim(x)
+[1] 12169 12169
+> dim(x)
+[1] 12169 12169
+> x[is.na(x)] <- 0
+> x[1:5, 1:5]
+> class(x) <- "numeric"
+> names <- gsub('.{6}$','', adjs)
+> colnames(x) <- names
+> x[1:5, 1:5]
+> isSymmetric(x)
+[1] FALSE
+> x <- x[sort(rownames(x)), sort(colnames(x)) ]
+> isSymmetric(x)
+[1] TRUE
+> x[1:5, 1:5]   
+
+> write.table(x, file = "x.adj.txt", sep = "\t", col.names= NA, row.names= T, quote = F )
+> xg <- graph.adjacency(adjmatrix= x, mode='undirected', diag=F, weighted=T)
+> xsif <- get.data.frame(xg)
+> write.table(xsif, file = "x.sif.txt", sep = "\t", col.names= T, row.names= F, quote = F )
+> normalit<-function(m){
++      (m - min(m))/(max(m)-min(m))
++ }
+> x_norm <- normalit(x)
+> min(x)
+[1] 0
+> min(x_norm)                                                                                                                                           
+[1] 0
+> max(x)                                                                                                                                                
+[1] 0.657639
+> max(x_norm)                                                                                                                                           
+[1] 1
+> 
+> write.table(x_norm, file = "x.adj_norm.txt", sep = "\t", col.names= NA, row.names= T, quote = F )                                                     
+> 
+>  xg_norm <- graph.adjacency(adjmatrix= x_norm, mode='undirected', diag=F, weighted=T)                                                                 
+> 
+> xsif_norm <- get.data.frame(xg_norm)                                                                                                                  
+> 
+> write.table(xsif_norm, file = "x.sif_norm.txt", sep = "\t", col.names= T, row.names= F, quote = F )
