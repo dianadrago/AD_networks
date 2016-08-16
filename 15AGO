@@ -79,3 +79,22 @@ casos_sc<- (filtro[,sample_casos_sc])
 write.table(sanos_sc, "sanos_sc.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
 write.table(casos_sc, "casos_sc.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
 
+# 0) source ~/enviromets/csbig/bin/activate
+# 1) modificar expfile, probes, run_id, y outdir
+#probes no debe de tener ningun header
+
+python /home/diana/rnw/parallel_aracne/genera_condor.py \
+  --path_to_aracne2 /home/diana/ARACNE/aracne2 \
+  --expfile /mnt/e/diana/kenya/sanos_sc.txt \
+  --probes /mnt/e/diana/kenya/probes_ad.txt \
+  --run_id kenya_ad_sanos_sc\
+  --outdir /mnt/e/diana/kenya/kenya_ad_sanos_sc \
+  --p 1
+
+# 2)  Poner en el encabezado de .condor abajo de log
+# requirements = Machine == "notron.inmegen.gob.mx"
+
+# 3) Dentro del outdir darle en linea de comandos:
+# condor_submit kenya/kenya_ad_sanos_sc.condor
+
+# 4) condor_status
