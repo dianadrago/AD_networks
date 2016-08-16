@@ -48,7 +48,8 @@ write.table(xsif, file = "x.sif.txt", sep = "\t", col.names= T, row.names= F, qu
 normalit<-function(m){
      (m - min(m[upper.tri(m)]))/(max(m)-min(m[upper.tri(m)]))
 }
-x_norm <- (normalit(x, diag=FALSE)) 
+x_norm <- (normalit(x))
+diag(x_norm) <- 0
 min(x)
 [1] 0
 
