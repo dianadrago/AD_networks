@@ -49,6 +49,7 @@ normalit<-function(m){
      (m - min(m[upper.tri(m)]))/(max(m)-min(m[upper.tri(m)]))
 }
 x_norm <- (normalit(x)) 
+diag(x_norm) <- 0
 min(x)
 [1] 0
 
