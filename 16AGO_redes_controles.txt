@@ -124,7 +124,8 @@ mi2p <- function(mi, n){
   return(x)
 }
 
-mi2p(0.6774973,239)                                                                                                                 [1] 3.532289e-59 
+mi2p(0.6774973,239)                                                                                               
+[1] 3.532289e-59 
 
 x_norm[x_norm < 0.6774973] <- 0
 write.table(x_norm, file = "sanos_norm_fpvalue.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
