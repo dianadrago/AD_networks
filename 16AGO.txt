@@ -143,7 +143,6 @@ quantile(sanos_q, probs=seq(0.995, 1, 0.00001))
   99.996%   99.997%   99.998%   99.999%  100.000% 
 0.7542126 0.7701207 0.7910152 0.8248470 1.0000000 
 
-
 ### 99.970%= 0.6270982
 pvalue= 4.542367e-53
 
@@ -170,3 +169,32 @@ write.table(xdpi, file = "sanos_norm_fpvalue_dpi.txt", sep = "\t", col.names= NA
 xg_norm_fpvalue_dpi <- graph.adjacency(adjmatrix= xdpi, mode='undirected', diag=F, weighted=T)
 xsif_norm_fpvalue_dpi <- get.data.frame(xg_norm_fpvalue_dpi)
 write.table(xsif_norm_fpvalue_dpi, file = "sanos_norm_fpvalue_sif_dpi.txt", sep = "\t", col.names= T, row.names= F, quote = F )
+
+#### casos
+### 99.970%= 0.6439622
+pvalue= 1.726921e-54
+
+mi2p <- function(mi, n){
+  alfa <- 1.062
+  beta <- -48.7
+  gamma <- -0.634
+  x <- exp(-((mi*((-beta) + (-gamma)*n)) - alfa))
+  return(x)
+}
+
+mi2p(0.6439622, 229)
+[1] 1.726921e-54
+
+x_norm[x_norm < 0.6439622] <- 0
+
+write.table(x_norm, file = "sanos_norm_fpvalue.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
+xg_norm_fpvalue <- graph.adjacency(adjmatrix= x_norm, mode='undirected', diag=F, weighted=T)
+xsif_norm_fpvalue <- get.data.frame(xg_norm_fpvalue)
+write.table(xsif_norm_fpvalue, file = "sanos_norm_fpvalue_sif.txt", sep = "\t", col.names= T, row.names= F, quote = F )
+xdpi <- aracne(mim =  x_norm, eps = 0.1)
+
+write.table(xdpi, file = "sanos_norm_fpvalue_dpi.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
+xg_norm_fpvalue_dpi <- graph.adjacency(adjmatrix= xdpi, mode='undirected', diag=F, weighted=T)
+xsif_norm_fpvalue_dpi <- get.data.frame(xg_norm_fpvalue_dpi)
+write.table(xsif_norm_fpvalue_dpi, file = "sanos_norm_fpvalue_sif_dpi.txt", sep = "\t", col.names= T, row.names= F, quote = F )
+
