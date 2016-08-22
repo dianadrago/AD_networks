@@ -16,7 +16,7 @@
 # ~/rnw/normalization-preprocessing
 
 Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
-        --celfolder /mnt/e/diana/kenya/GSE48350_RAW/ /mnt/e/diana/kenya/GSE4757/ \
+        --celfolder /mnt/e/diana/kenya/GSE48350_RAW/ \
         --bgcorrect rma \
         --normalize quantile \
         --summarize robust_weighted_average \
