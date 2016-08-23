@@ -46,6 +46,7 @@ pheno <- read.table("/mnt/e/diana/kenya/metadata_full_final.txt", header=T)
 # Design a contingence matrix
 design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
 colnames(design) <- c('case','control')
+rownames(pheno) <- pheno[,1]
 rownames(design) <- rownames(pheno)
 design[which(pheno$outcome == "case"),1]=1
 design[which(pheno$outcome == "control"),2]=1
