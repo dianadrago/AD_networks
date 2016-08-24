@@ -64,13 +64,13 @@ write.table(U133_norm, "U133_norm_complete_set.txt", quote = F, row.names = TRUE
 
 Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
         --matrix /mnt/e/diana/kenya/U133AFFY/U133_norm_complete_set.txt \
-        --phenotype /mnt/e/diana/kenya/U133AFFY/metadata.tsv \
+        --phenotype /mnt/e/diana/kenya/resultados_renorm_sc/metadata_sc.tsv \
         --output /mnt/e/diana/kenya/U133AFFY/U133_norm_complete_batch_corrected_mtx.txt
 
 # collapse
- Rscript collapser.R \
+ Rscript ~/rnw/normalization-preprocessing/collapser.R \
         --matrix U133_norm_complete_batch_corrected_mtx.txt \
-        --phenotype /mnt/e/diana/kenya/U133AFFY/metadata.tsv \
+        --phenotype /mnt/e/diana/kenya/resultados_renorm_sc/metadata_sc.tsv \
         --collapse B \
         --case case \
         --control control \
