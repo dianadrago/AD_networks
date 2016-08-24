@@ -10,9 +10,8 @@
 # 133plus2 #####Normalización con frma de cada set por separado ####
 
 # biocLite("hgu133plus2frmavecs")
-
 # GSE48350: /mnt/e/diana/kenya/GSE48350_RAW
-# GSE4757: /mnt/e/diana/kenya/GSE4757
+
 # ~/rnw/normalization-preprocessing
 
 Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
@@ -20,7 +19,7 @@ Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
         --bgcorrect rma \
         --normalize quantile \
         --summarize robust_weighted_average \
-        --matrix /mnt/e/diana/kenya/133plus2.tsv
+        --matrix /mnt/e/diana/kenya/U133AFFY/133plus2.tsv
 
 # 133A
 
@@ -34,14 +33,14 @@ Rscript ~/rnw/normalization-preprocessing/frma_normalizer.R \
         --bgcorrect rma \
         --normalize quantile \
         --summarize robust_weighted_average \
-        --matrix /mnt/e/diana/kenya/133A.tsv
+        --matrix /mnt/e/diana/kenya/U133AFFY/133A.tsv
         
 # agregar un tab a cada columna de cada archivo .tsv
 
 # Script R #### Para arreglar las dimensiones si se utilizan dos arreglos diferentes###
 
-U133A <- read.table("/mnt/e/diana/kenya/133A.tsv")
-U133plus2 <- read.table("/mnt/e/diana/kenya/133plus2.tsv")
+U133A <- read.table("/mnt/e/diana/kenya/U133AFFY/133A.tsv")
+U133plus2 <- read.table("/mnt/e/diana/kenya/U133AFFY/133plus2.tsv")
 
 dim(U133A)
 dim(U133plus2)
@@ -64,14 +63,14 @@ write.table(U133_norm, "U133_norm_complete_set.txt", quote = F, row.names = TRUE
 # combat
 
 Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
-        --matrix /mnt/e/diana/kenya/U133_norm_complete_set.txt \
-        --phenotype /mnt/e/diana/kenya/metadata.tsv \
-        --output /mnt/e/diana/kenya/U133_norm_complete_batch_corrected_mtx.txt
+        --matrix /mnt/e/diana/kenya/U133AFFY/U133_norm_complete_set.txt \
+        --phenotype /mnt/e/diana/kenya/U133AFFY/metadata.tsv \
+        --output /mnt/e/diana/kenya/U133AFFY/U133_norm_complete_batch_corrected_mtx.txt
 
 # collapse
  Rscript collapser.R \
         --matrix U133_norm_complete_batch_corrected_mtx.txt \
-        --phenotype /mnt/e/diana/kenya/metadata.tsv \
+        --phenotype /mnt/e/diana/kenya/U133AFFY/metadata.tsv \
         --collapse B \
         --case case \
         --control control \
