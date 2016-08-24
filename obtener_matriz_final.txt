@@ -41,7 +41,7 @@ Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
 ############### exp differencial
 library(limma)
 edata <- read.table("/mnt/e/diana/kenya/matriz_final_para_redes_difexp.txt")
-pheno <- read.table("/mnt/e/diana/kenya/metadata_full_final.txt", header=T)
+pheno <- read.table("/mnt/e/diana/kenya/metadata_full_final.txt", header=T, row.names=1)
 
 # Design a contingence matrix
 design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
