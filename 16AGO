@@ -19,7 +19,8 @@ write.table(meta_filtro, "meta_filtro.txt", quote = F, row.names = FALSE, col.na
 ####Expresion diferencial
 library(limma)
 edata <- read.table("filtro.txt")
-pheno <- read.table("meta_filtro.txt", header=TRUE)
+pheno <- read.table("meta_filtro.txt", header=TRUE, row.names=1)
+edata <- edata[ ,(as.vector(pheno$sample_name))]
 
 # Design a contingence matrix
 design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
