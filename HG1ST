@@ -1,0 +1,79 @@
+# frma affy HUMAN GENE 1.0 ST
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("ugene10sttranscriptcluster.db")
+
+https://support.bioconductor.org/p/57115/
+https://bioconductor.org/packages/devel/bioc/manuals/oligo/man/oligo.pdf
+
+library(annotate)
+library("oligo") 
+library(limma)
+library("frma") 
+library(hugene10stv1cdf)
+library(hugene10stprobeset.db)
+
+celFiles <- list.celfiles("/mnt/e/diana/kenya/GSE36980", full.name=TRUE)
+affybatch <- read.celfiles(celFiles) 
+
+frmaData <- frma(affybatch, background="rma", normalize="quantile", summarize="robust_weighted_average")
+eset <- frmaData
+edata <- exprs(frmaData)
+write.table(edata, file="HG1ST.txt", quote = F, row.names = TRUE, col.names = TRUE, sep = "\t")
+#edata <- read.table("HG1ST.txt") 
+
+pheno <- read.table("metadata.HG1st.tsv", header = TRUE, row.names=1)
+edata <- edata[ ,(as.vector(pheno$sample_name))]
+
+ID <- featureNames(eset)
+# annodb <- "hugene10stprobeset.db"  
+# Symbol <- as.character(lookUp(ID, annodb, "SYMBOL"))
+
+#annotation HuGene v1
+db <- hugene10stprobesetSYMBOL
+annot <- as.list(db[ID])
+annot <- data.frame(unlist(as.list(annot)))
+gene <- as.vector(annot[,1])
+genesymbol<-ifelse(is.na(gene), as.vector(ID), as.vector(gene))
+
+# Design a contingence matrix
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+###  B collapse  ###
+# make the contrasts matrix
+cont.matrix = makeContrasts('case - control', levels=design)
+# differential expression analisys
+fit = lmFit(edata, design)
+fit2 = contrasts.fit(fit, cont.matrix)
+fit2 = eBayes(fit2)
+statistics <- topTable(fit2, coef=1, adjust='fdr', n = length(row.names(edata)), sort = "none")
+# making the matrix to proced the collapse
+precolaps <- data.frame(genesymbol, statistics[,6],edata)
+colnames(precolaps)[2]<-"B"
+# collapse
+colapsed <- do.call(rbind, lapply(split(precolaps,precolaps$genesymbol),function(chunk) chunk[which.max(chunk$B),]))
+rownames(colapsed)<-colapsed[,1]
+colapsed <- colapsed[,c(-1,-2)]
+
+## Write result ##
+write.table(colapsed, file="HG10ST_colapsed.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
+
+# gen only gene IDs matrix
+
+> dim(colapsed)
+[1] 44987    79
+> filtered <- colapsed[24974:44987, ]                                                                                                                                         
+> dim(filtered)
+[1] 20014    79
+> filtered[1:5, 1:5]
+        GSM907792.CEL GSM907793.CEL GSM907794.CEL GSM907795.CEL GSM907796.CEL
+A1BG         8.146155      7.932071      8.057220      8.272984      8.306809
+A1CF         4.623660      4.804373      4.707217      5.047640      4.522802
+A2M         10.301480     10.614687     11.269049     10.549778     12.141648
+A2ML1        6.683083      6.109142      6.429606      6.327591      6.431935
+A3GALT2      6.019041      6.114715      6.604461      6.358048      6.349678
+
+write.table(filtered, file="HG10ST_colapsed_filtered.txt", quote = FALSE, sep = "\t", row.names = TRUE, col.names=NA)
