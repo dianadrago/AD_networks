@@ -1,0 +1,84 @@
+###Unir listas de muestras "metadata" de 133 y HG1_st
+metadata_U133 <- read.table("/mnt/e/diana/kenya/resultados_renorm_sc/metadata_sc.tsv", header=TRUE)
+metadata_HG1<- read.table("/mnt/e/diana/kenya/HuGeV1/metadata.HG1st2.tsv", header=TRUE)
+
+dim(metadata_U133)
+dim(metadata_HG1)
+
+identical(rownames(metadata_U133), rownames(metadata_HG1))
+metadata_complete_2 <- (rbind(metadata_U133, metadata_HG1))
+metadata_complete_2
+write.table(metadata_complete_2, quote=FALSE, sep='\t', col.names=TRUE, row.names=FALSE, "metadata_complete.tsv")
+
+####Intersección
+U133 <- read.table("/mnt/e/diana/kenya/U133AFFY/U133_norm_complete_batch_corrected_mtx_colapsed.txt")
+HG1 <- read.table("/mnt/e/diana/kenya/HuGeV1/HG10ST_colapsed_filtered.txt")
+
+dim(U133)
+dim(HG1)
+
+U133_crop <- U133[intersect(rownames(U133), rownames(HG1)),]
+HG1_crop <- HG1[intersect(rownames(U133), rownames(HG1)),]
+dim(U133_crop)
+dim(HG1_crop)
+
+library(limma)
+identical(rownames(U133_crop), rownames(HG1_crop))
+complete_norm_2 <- data.matrix(cbind(U133_crop, HG1_crop))
+complete_final_2 <- normalizeBetweenArrays(complete_norm_2)
+write.table(complete_final_2, "complete_final_set_2.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+
+# combat
+
+Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
+        --matrix /mnt/e/diana/kenya/complete_final_set_2.txt \
+        --phenotype /mnt/e/diana/kenya/metadata_complete.tsv  \
+        --output /mnt/e/diana/kenya/complete_all_combat_mtx.txt
+        
+# Separar casos y controles
+matriz <- read.table("complete_all_combat_mtx.txt") 
+meta <- read.table("metadata_complete.tsv", header= TRUE, row.names=1) 
+dim(matriz)
+dim(meta)
+meta_casos <- meta[meta$outcome=="case",]
+meta_controles <- meta[meta$outcome=="control",]
+head(meta_casos)
+head(meta_controles)
+dim(meta_casos)
+dim(meta_controles)
+sample_sanos <- as.vector(meta_controles$sample_name)
+sample_casos <- as.vector(meta_casos$sample_name)
+sanos<- (matriz[,sample_sanos])
+casos<- (matriz[,sample_casos])
+
+write.table(sanos, "sanos_2.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+write.table(casos, "casos_2.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
+
+# 0) source ~/enviromets/csbig/bin/activate
+# 1) modificar expfile, probes, run_id, y outdir
+#probes no debe de tener ningun header
+
+python /home/diana/rnw/parallel_aracne/genera_condor.py \
+        --path_to_aracne2 /home/diana/ARACNE/aracne2 \
+        --expfile /mnt/e/diana/kenya/sanos_2.txt \
+        --probes /mnt/e/diana/kenya/probes_ad2.txt \
+        --run_id kenya_ad_sanos_2_complete\
+        --outdir /mnt/e/diana/kenya/kenya_ad_sanos_2_complete \
+        --p 1
+
+# 2)  Poner en el encabezado de .condor abajo de log
+# requirements = Machine == "notron.inmegen.gob.mx"
+
+# 3) Dentro del outdir darle en linea de comandos:
+# condor_submit kenya/kenya_ad_sanos_2_complete.condor
+
+# 4) condor_status
+
+### para casos
+python /home/diana/rnw/parallel_aracne/genera_condor.py \
+        --path_to_aracne2 /home/diana/ARACNE/aracne2 \
+        --expfile /mnt/e/diana/kenya/casos_2.txt \
+        --probes /mnt/e/diana/kenya/probes_ad2.txt \
+        --run_id kenya_ad_casos_2_complete \
+        --outdir /mnt/e/diana/kenya/kenya_ad_casos_2_complete \
+        --p 1
