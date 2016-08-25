@@ -1,0 +1,22 @@
+####Expresion diferencial TODOS (133A,133plus2 y HG1ST)
+library(limma)
+edata <- read.table("complete_all_combat_mtx.txt")
+pheno <- read.table("metadata_complete.tsv", header=TRUE, row.names=1)
+edata <- edata[ ,(rownames(pheno))]
+
+# Design a contingence matrix
+design = matrix(rep(0, 2*length(rownames(pheno))), nrow=length(rownames(pheno)))
+colnames(design) <- c('case','control')
+rownames(design) <- rownames(pheno)
+design[which(pheno$outcome == "case"),1]=1
+design[which(pheno$outcome == "control"),2]=1
+
+# make the contrasts matrix
+cont.matrix = makeContrasts('case - control', levels=design)
+# differential expression analisys
+fit = lmFit(edata, design)
+fit2 = contrasts.fit(fit, cont.matrix)
+fit2 = eBayes(fit2)
+statistics <- topTable(fit2, coef=1, adjust='fdr', n = length(row.names(edata)), sort = "none")
+
+write.table(statistics, "expresion_diferencial_complete.txt", quote = F, row.names = TRUE, col.names = NA, sep = "\t")
