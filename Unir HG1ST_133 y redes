@@ -37,7 +37,7 @@ Rscript ~/rnw/normalization-preprocessing/ComBat_correction.R \
         
 # Separar casos y controles
 matriz <- read.table("complete_all_combat_mtx.txt") 
-meta <- read.table("metadata_complete.tsv", header= TRUE, row.names=1) 
+meta <- read.table("metadata_complete.tsv", header= TRUE) 
 dim(matriz)
 dim(meta)
 meta_casos <- meta[meta$outcome=="case",]
