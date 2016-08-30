@@ -127,7 +127,7 @@ mi2p <- function(mi, n){
   return(x)
 }
 
-mi2p(0.5791039, 229)
+mi2p(0.5791039, 229)  ######229 -> numero de sanos  y son 134 casos
 [1] 4.995467e-49
 
 x_norm[x_norm < 0.5791039] <- 0
