@@ -212,7 +212,7 @@ mi2p <- function(mi, n){
 mi2p(0.6505604 ,134)
 [1] 4.997475e-38
 
-x_norm[x_norm < 0.5324336] <- 0
+x_norm[x_norm < 0.6505604] <- 0
 write.table(x_norm, file = "casos_norm_fpvalue.txt", sep = "\t", col.names= NA, row.names= T, quote = F)
 xg_norm_fpvalue <- graph.adjacency(adjmatrix= x_norm, mode='undirected', diag=F, weighted=T)
 xsif_norm_fpvalue <- get.data.frame(xg_norm_fpvalue)
