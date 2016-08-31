@@ -208,7 +208,7 @@ mi2p <- function(mi, n){
   return(x)
 }
 
-mi2p(0.5324336)
+mi2p(0.5324336,)
 [1] 
 
 x_norm[x_norm < 0.5324336] <- 0
